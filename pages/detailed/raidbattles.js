@@ -32,7 +32,7 @@ function get(url, id, bkp)
                     bosses.forEach(s =>
                     {
                         var temp = {};
-                        temp.name = s.querySelector(":scope > .pkmn-name").innerHTML;
+                        temp.name = s.querySelector(":scope > .pkmn-name").textContent.trim();
                         temp.image = s.querySelector(":scope > .pkmn-list-img > img").src;
                         temp.canBeShiny = s.querySelector(":scope > .shiny-icon") != null;
                         raidboss.bosses.push(temp);
@@ -45,7 +45,7 @@ function get(url, id, bkp)
                     shinies.forEach(f =>
                     {
                         var poke = {};
-                        poke.name = f.querySelector(":scope > .pkmn-name").innerHTML;
+                        poke.name = f.querySelector(":scope > .pkmn-name").textContent.trim();
                         poke.image = f.querySelector(":scope > .pkmn-list-img > img").src;
 
                         raidboss.shinies.push(poke);

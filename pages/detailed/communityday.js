@@ -3,6 +3,14 @@ const jsd = require('jsdom');
 const { JSDOM } = jsd;
 const https = require('https');
 
+// Renders an HTML fragment through the DOM so tags are dropped and entities decoded.
+function htmlToText(dom, html)
+{
+    var scratch = dom.window.document.createElement("div");
+    scratch.innerHTML = html;
+    return scratch.textContent.trim();
+}
+
 function get(url, id, bkp)
 {
     return new Promise(resolve => {
@@ -35,7 +43,7 @@ function get(url, id, bkp)
                     spawns.forEach(s =>
                     {
                         var temp = {};
-                        temp.name = s.querySelector(":scope > .pkmn-name").innerHTML;
+                        temp.name = s.querySelector(":scope > .pkmn-name").textContent.trim();
                         temp.image = s.querySelector(":scope > .pkmn-list-img > img").src;
                         commday.spawns.push(temp);
                     });
@@ -48,7 +56,7 @@ function get(url, id, bkp)
                     fam.forEach(f =>
                     {
                         var poke = {};
-                        poke.name = f.querySelector(":scope > .pkmn-name").innerHTML;
+                        poke.name = f.querySelector(":scope > .pkmn-name").textContent.trim();
                         poke.image = f.querySelector(":scope > .pkmn-list-img > img").src;
 
                         commday.shinies.push(poke);
@@ -64,7 +72,7 @@ function get(url, id, bkp)
                 var b = bonuses[i];
 
                 var bonus = {};
-                bonus.text = b.querySelector(':scope > .bonus-text').innerHTML;
+                bonus.text = b.querySelector(':scope > .bonus-text').textContent.trim();
                 bonus.image = b.querySelector(':scope > .item-circle > img').src;
                 commday.bonuses.push(bonus);
 
@@ -81,17 +89,10 @@ function get(url, id, bkp)
                 {
                     if (bonusTextEle.tagName == "P")
                     {
-                        if (bonusTextEle.innerHTML.includes("<br>\n"))
-                        {
-                            var split = bonusTextEle.innerHTML.split("<br>\n");
-                            split.forEach(s => {
-                                commday.bonusDisclaimers.push(s);
-                            });
-                        }
-                        else
-                        {
-                            commday.bonusDisclaimers.push(bonusTextEle.innerHTML);
-                        }
+                        bonusTextEle.innerHTML.split(/<br\s*\/?>\s*/i)
+                            .map(part => htmlToText(dom, part))
+                            .filter(part => part.length > 0)
+                            .forEach(part => commday.bonusDisclaimers.push(part));
                     }
                     bonusTextEle = bonusTextEle.nextSibling
                 }
@@ -108,8 +109,8 @@ function get(url, id, bkp)
                     rewards: []
                 };
 
-                research.step = parseInt(r.querySelector(":scope > .step-label > .step-number").innerHTML);
-                research.name = r.querySelector(":scope > .task-reward-wrapper > .step-name").innerHTML;
+                research.step = parseInt(r.querySelector(":scope > .step-label > .step-number").textContent.trim());
+                research.name = r.querySelector(":scope > .task-reward-wrapper > .step-name").textContent.trim();
 
                 var tasks = r.querySelectorAll(":scope > .task-reward-wrapper > .task-reward");
 
@@ -123,12 +124,9 @@ function get(url, id, bkp)
                         }
                     };
 
-                    task.text = t.querySelector(":scope > .task-text").innerHTML;
+                    task.text = t.querySelector(":scope > .task-text").textContent.trim();
 
-                    task.text = task.text.replace("\n        ", "").trim();
-
-                    task.reward.text = t.querySelector(":scope > .reward-text > .reward-label").innerHTML;
-                    task.reward.text = task.reward.text.replace("<span>", "").replace("</span>", "");
+                    task.reward.text = t.querySelector(":scope > .reward-text > .reward-label").textContent.trim();
                     task.reward.image = t.querySelector(":scope > .reward-text > .reward-bubble > .reward-image").src;
 
                     research.tasks.push(task);
@@ -143,7 +141,7 @@ function get(url, id, bkp)
                         image: ""
                     };
 
-                    rew.text = w.querySelector(":scope > .reward-label > span").innerHTML;
+                    rew.text = w.querySelector(":scope > .reward-label").textContent.trim();
                     rew.image = w.querySelector(":scope > .page-reward-item > .reward-image").src;
 
                     research.rewards.push(rew);

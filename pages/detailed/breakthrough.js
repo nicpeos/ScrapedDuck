@@ -19,13 +19,13 @@ function get(url, id, bkp)
                 list: []
             };
 
-            reward.name = content[0].querySelector(":scope > .pkmn-list-item > .pkmn-name").innerHTML;
+            reward.name = content[0].querySelector(":scope > .pkmn-list-item > .pkmn-name").textContent.trim();
             reward.canBeShiny = content[0].querySelector(":scope > .pkmn-list-item > .shiny-icon") != null;
             reward.image = content[0].querySelector(":scope > .pkmn-list-item > .pkmn-list-img > img").src;
 
             dom.window.document.querySelectorAll(".pkmn-list-item").forEach(p => {
                 var pokemon = {
-                    name: p.querySelector(":scope > .pkmn-name").innerHTML,
+                    name: p.querySelector(":scope > .pkmn-name").textContent.trim(),
                     canBeShiny: p.querySelector(":scope > .shiny-icon") != null,
                     image: p.querySelector(":scope > .pkmn-list-img > img").src
                 }

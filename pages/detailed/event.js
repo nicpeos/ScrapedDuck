@@ -330,7 +330,7 @@ function parseBossFromElement(bossElement, raidType) {
 
   if (!nameElement || !imageElement) return null;
 
-  var baseName = nameElement.innerHTML.trim();
+  var baseName = nameElement.textContent.trim();
   var finalName = baseName;
   
   // Prepend Shadow/Mega/Primal prefix if the raid type indicates it but the name doesn't already have it
