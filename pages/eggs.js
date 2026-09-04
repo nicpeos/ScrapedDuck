@@ -21,7 +21,7 @@ function get()
             {
                 if (c.tagName == "H2")
                 {
-                    currentType = c.innerHTML.trim();
+                    currentType = c.textContent.trim();
                     currentAdventureSync = currentType.includes("(Adventure Sync Rewards)");
                     currentGiftExchange = currentType.includes("(From Route Gift)");
                     currentType = currentType.split(" Eggs")[0];
@@ -45,7 +45,7 @@ function get()
                             rarity: 0
                         };
 
-                        pokemon.name = e.querySelector(".name").innerHTML || "";
+                        pokemon.name = e.querySelector(".name").textContent.trim() || "";
                         pokemon.eggType = currentType;
                         pokemon.isAdventureSync = currentAdventureSync;
                         pokemon.image = e.querySelector(".icon img").src || "";
@@ -53,8 +53,8 @@ function get()
                         pokemon.isRegional = e.querySelector(".regional-icon") != null;
                         pokemon.isGiftExchange = currentGiftExchange;
 
-                        var cpText = e.querySelector(".cp-range").innerHTML;
-                        var cpValue = cpText.replace('<span class="label">CP </span>', '').trim();
+                        var cpText = e.querySelector(".cp-range").textContent;
+                        var cpValue = cpText.replace(/^\s*CP\s*/i, '').trim();
                         
                         // Logic to handle single CP value if no range is provided 
                         if (cpValue.includes(' - ')) {

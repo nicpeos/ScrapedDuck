@@ -3,6 +3,13 @@ const jsd = require('jsdom');
 const { JSDOM } = jsd;
 const https = require('https');
 
+// CP cells render as "<div>Max CP</div> 117", so pull the trailing number out of the text.
+function parseCombatPower(element)
+{
+    var match = (element?.textContent || "").match(/(\d+)\s*$/);
+    return match ? parseInt(match[1]) : -1;
+}
+
 function get()
 {
     return new Promise(resolve => {
@@ -18,7 +25,7 @@ function get()
             taskNameToID["Exploring Tasks"] = "explore";
             taskNameToID["Training Tasks"] = "training";
             taskNameToID["Team GO Rocket Tasks"] = "rocket";
-            taskNameToID["Buddy &amp; Friendship Tasks"] = "buddy";
+            taskNameToID["Buddy & Friendship Tasks"] = "buddy";
             taskNameToID["AR Scanning Tasks"] = "ar";
             taskNameToID["Sponsored Tasks"] = "sponsored";
 
@@ -30,8 +37,8 @@ function get()
             types.forEach (_e =>
             {
                 _e.querySelectorAll(":scope > .task-list > .task-item").forEach(task => {
-                    var text = task.querySelector(":scope > .task-text").innerHTML.trim();
-                    var type = taskNameToID[_e.querySelector(":scope > h2").innerHTML.trim()];
+                    var text = task.querySelector(":scope > .task-text").textContent.trim();
+                    var type = taskNameToID[_e.querySelector(":scope > h2").textContent.trim()];
 
                     var rewards = [];
                     
@@ -48,11 +55,11 @@ function get()
                                 }
                             };
 
-                            reward.name = r.querySelector(":scope > .reward-label > span").innerHTML.trim();
+                            reward.name = r.querySelector(":scope > .reward-label").textContent.trim();
                             reward.image = r.querySelector(":scope > .reward-bubble > .reward-image").src;
 
-                            reward.combatPower.min = parseInt(r.querySelector(":scope > .cp-values > .min-cp").innerHTML.trim().split("</div>")[1]);
-                            reward.combatPower.max = parseInt(r.querySelector(":scope > .cp-values > .max-cp").innerHTML.trim().split("</div>")[1]);
+                            reward.combatPower.min = parseCombatPower(r.querySelector(":scope > .cp-values > .min-cp"));
+                            reward.combatPower.max = parseCombatPower(r.querySelector(":scope > .cp-values > .max-cp"));
                             reward.canBeShiny = r.querySelector(":scope > .reward-bubble > .shiny-icon") != null;
 
                             rewards.push(reward);

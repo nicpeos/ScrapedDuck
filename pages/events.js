@@ -44,8 +44,8 @@ function get()
         
                         events.forEach (e =>
                         {
-                            var heading = e.querySelector(":scope > .event-item-wrapper > p").innerHTML;
-                            var name = e.querySelector(":scope > .event-item-wrapper > .event-item > .event-text-container > .event-text > h2").innerHTML;
+                            var heading = e.querySelector(":scope > .event-item-wrapper > p").textContent.trim();
+                            var name = e.querySelector(":scope > .event-item-wrapper > .event-item > .event-text-container > .event-text > h2").textContent.trim();
                             var image = e.querySelector(":scope > .event-item-wrapper > .event-item > span.event-img-wrapper > img").src;
                             if (image.includes("cdn-cgi"))
                             {

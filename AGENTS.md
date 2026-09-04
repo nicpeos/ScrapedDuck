@@ -68,6 +68,8 @@ Event types with dedicated detail scrapers: `research-breakthrough`, `pokemon-sp
 ## Key patterns
 
 - Use `JSDOM.fromURL()` for scraping.
+- Read text with `textContent`, never `innerHTML` — LeekDuck wraps labels in nested `<span>`s,
+  which otherwise leak markup and HTML entities into the JSON.
 - Temp file naming: `{eventID}_generic.json` or `{eventID}.json`.
 - Always fall back to backup data in `.catch()` so a single failed page doesn't drop existing data.
 - Normalize CDN image URLs to `cdn.leekduck.com/assets/`.

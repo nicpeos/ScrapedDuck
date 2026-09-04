@@ -58,6 +58,8 @@ Scrape Pokémon GO event data from LeekDuck.com, generate JSON/iCal outputs. For
 ## Key Patterns
 
 - Use `JSDOM.fromURL()` for scraping
+- Read text with `textContent`, never `innerHTML` — LeekDuck wraps labels in nested `<span>`s,
+  which otherwise leak markup and HTML entities into the JSON
 - Temp files: `{eventID}_generic.json` or `{eventID}.json`
 - Always provide backup fallback in `.catch()` using backup from `data` branch
 - Normalize CDN images: `cdn.leekduck.com/assets/`
